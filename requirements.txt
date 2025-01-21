@@ -1,0 +1,10 @@
+annotated-types
+email-validator
+fastapi
+motor
+pydantic
+pydantic-core
+pymongo
+uvicorn
+bson
+passlib
