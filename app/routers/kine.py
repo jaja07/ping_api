@@ -12,7 +12,7 @@ router = APIRouter()
 kineService = KineService()
 
 #Create route
-@router.post("/", response_description="New kine added", response_model=KineModel, status_code=status.HTTP_201_CREATED, response_model_by_alias=False, tags=["Kiné"])
+@router.post("/", response_description="New kine added", response_model=KineModel, status_code=status.HTTP_201_CREATED, response_model_by_alias=False)
 async def add_kine(kine: KineModel = Body(...)):  #La requête doit contenir un corps JSON qui sera validé et converti en une instance du modèle KineModel. Body(...) : Indique que cette donnée est obligatoire (le ... signifie "valeur requise").
     """
     Insert a new kine record.
@@ -26,7 +26,7 @@ async def add_kine(kine: KineModel = Body(...)):  #La requête doit contenir un 
     return created_kine
 
 # Read route
-@router.get("/{id}", response_description="Get a single kine", response_model=KineModel, response_model_by_alias=False, tags=["Kiné"])
+@router.get("/{id}", response_description="Get a single kine", response_model=KineModel, response_model_by_alias=False)
 async def read_kine(id: str):
     """
     Retrieve a kine record.
@@ -51,7 +51,7 @@ async def update_kine(id: str, kine: UpdateKineModel = Body(...)):
         k: v for k, v in kine.model_dump(by_alias=True).items() if v is not None
     }
     if len(kine) >= 1:
-        update_result = kineService.update(id, kine)
+        update_result = await kineService.update(id, kine)
         if update_result is not None:
             return update_result
         else:
@@ -68,7 +68,7 @@ async def delete_document(id: str):
     """
     Remove a single kine record from the database.
     """
-    delete_result = kineService.delete(id)
+    delete_result = await kineService.delete(id)
     if delete_result == 1:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     raise HTTPException(status_code=404, detail=f"Student {id} not found")

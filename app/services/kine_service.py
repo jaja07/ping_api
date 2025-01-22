@@ -6,7 +6,7 @@ from pymongo import ReturnDocument
 
 class KineService:
     def __init__(self):
-        MONGO_URL = os.getenv("MONGO_URL")
+        MONGO_URL = os.getenv("DATABASE_URL")
         self.client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URL)
         self.database = self.client.fastapi
         self.collection = self.database.kine
