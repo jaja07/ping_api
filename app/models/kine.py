@@ -3,7 +3,7 @@ from pydantic import ConfigDict, BaseModel, Field, EmailStr
 from pydantic.functional_validators import BeforeValidator
 from typing_extensions import Annotated
 from bson import ObjectId
-from ..utils.model import * 
+from utils.model import * 
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
 

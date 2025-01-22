@@ -1,10 +1,10 @@
 annotated-types
 email-validator
 fastapi
-motor
+motor==3.4.0
+pymongo==4.8.0
 pydantic
 pydantic-core
-pymongo
 uvicorn
 bson
 passlib

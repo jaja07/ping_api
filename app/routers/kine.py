@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends, Body, status
 from fastapi.responses import Response
 from bson.objectid import ObjectId
-from ..services.kine_service import KineService
+from services.kine_service import KineService
 from fastapi.encoders import jsonable_encoder
-from ..models.kine import (
+from models.kine import (
     KineModel,
     UpdateKineModel
 )
@@ -31,7 +31,7 @@ async def read_kine(id: str):
     """
     Retrieve a kine record.
     """
-    read_kine = kineService.read_one(id)
+    read_kine = await kineService.read_one(id)
     if read_kine:
         return read_kine
     else:
