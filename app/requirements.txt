@@ -6,5 +6,4 @@ pymongo==4.8.0
 pydantic
 pydantic-core
 uvicorn
-bson
 passlib
