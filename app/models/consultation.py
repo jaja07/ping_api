@@ -1,9 +1,9 @@
 from typing import Optional, List
-from pydantic import ConfigDict, BaseModel, Field, EmailStr
+from pydantic import ConfigDict, BaseModel, Field
 from pydantic.functional_validators import BeforeValidator
 from typing_extensions import Annotated
-from bson import ObjectId
-from ..utils.model import * 
+from utils.model import * 
+from datetime import datetime
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
@@ -11,7 +11,7 @@ PyObjectId = Annotated[str, BeforeValidator(str)]
 class ConsultationModel(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
     patientid: PyObjectId = Field(...)
-    date_consultation: date = Field(...)
+    date_consultation: datetime = Field(...)
     flexion: Flexion = Field(...)
     extension: Extension = Field(...)
     bdk: str = Field(...)
@@ -31,7 +31,7 @@ class ConsultationModel(BaseModel):
 
 class UpdateConsultationModel(BaseModel):
     patientid: PyObjectId = Field(...)
-    date_consultation: Optional[date] = None
+    date_consultation: Optional[datetime] = None
     flexion: Optional[Flexion] = None
     extension: Optional[Extension] = None
     bdk: Optional[str] = None
@@ -51,9 +51,9 @@ class UpdateConsultationModel(BaseModel):
 
 class ConsultationCollection(BaseModel):
     """
-    A container holding a list of `PatientModel` instances.
+    A container holding a list of `ConsultationModel` instances.
 
     This exists because providing a top-level array in a JSON response can be a [vulnerability](https://haacked.com/archive/2009/06/25/json-hijacking.aspx/)
     """
 
-    students: List[ConsultationModel]
+    consultations: List[ConsultationModel]

@@ -45,17 +45,44 @@ class KineService:
         """
         kine = await self.collection.find_one({"_id": ObjectId(id)})
         return kine
-        
-    # Read All: Récupérer tous les kinés
-    async def read_all(self):
+    
+        # Read All: Récupérer tous les patients
+    async def read_all(self, id):
         """
-        Read all kine.
+        Read all patients from a specific kine.
+
+        Args:
+            id (str): The kine id from which we retrieve a list of matching patients.
 
         Returns:
-            List[_DocumentType]: A list of kine documents.
+            List[dict]: A list of patients.
         """
-        kines = self.collection.find()
-        return kines
+        pipeline = [
+            {
+                "$match": {"_id": id}
+            },
+            {
+                "$lookup": {
+                    "from": "patients",
+                    "localField": "_id",
+                    "foreignField": "kineid",
+                    "as": "patients",
+                    "pipeline": [
+                        {
+                            "$project": {
+                                "_id": 1,
+                                "nom": 1,
+                                "prenom": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        ]      
+        # Exécution de l'agrégation
+        async for doc in self.collection.aggregate(pipeline): # doc est un dictionnaire
+            return doc.get("patients", [])
+        return []
     
     # Update: Mettre à jour un kiné par son ID
     async def update(self, id, update_fields):

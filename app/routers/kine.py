@@ -7,6 +7,9 @@ from models.kine import (
     KineModel,
     UpdateKineModel
 )
+from models.patient import (
+    PatientCollection
+)
 
 router = APIRouter()
 kineService = KineService()
@@ -17,15 +20,15 @@ async def add_kine(kine: KineModel = Body(...)):  #La requête doit contenir un 
     """
     Insert a new kine record.
     """
-    kine_data = kine.model_dump(by_alias=True, exclude=["id"])  #Convertit l'instance du modèle en un dictionnaire Python. by_alias=True : Utilise les alias définis dans StudentModel (s'il y en a) pour les clés du dictionnaire.
+    kine_data = kine.model_dump(by_alias=True, exclude=["id"])  #Convertit l'instance du modèle en un dictionnaire Python. by_alias=True : Utilise les alias définis dans KineModel (s'il y en a) pour les clés du dictionnaire.
     kineid = await kineService.create(kine_data)
     if kineid is None:
-        raise HTTPException(status_code=500, detail="Project could not be created")
+        raise HTTPException(status_code=500, detail="Kine could not be created")
     else:
         created_kine = await kineService.read_one(kineid)
     return created_kine
 
-# Read route
+# Read kine route
 @router.get("/{id}", response_description="Get a single kine", response_model=KineModel, response_model_by_alias=False)
 async def read_kine(id: str):
     """
@@ -37,6 +40,17 @@ async def read_kine(id: str):
     else:
         raise HTTPException(status_code=404, detail="Kine not found")   
 
+# Read patients route
+@router.get("/patients/{id}", response_description="Get patients", response_model=PatientCollection, response_model_by_alias=False)
+async def read_patients(id: str):
+    """
+    Retrieve a list of patients for a specific kine.
+    """
+    read_patients = await kineService.read_all(id)
+    if read_patients:
+        return read_patients
+    else:
+        raise HTTPException(status_code=404, detail="Patients not found")
 
 # Update route
 @router.put("/{id}", response_description="Kine data updated", response_model=KineModel)
@@ -55,12 +69,12 @@ async def update_kine(id: str, kine: UpdateKineModel = Body(...)):
         if update_result is not None:
             return update_result
         else:
-            raise HTTPException(status_code=404, detail=f"Student {id} not found")
+            raise HTTPException(status_code=404, detail=f"Kine {id} not found")
     else: 
         if (existing_kine := kineService.read_one(id)) is not None:
             return existing_kine 
         else:
-            raise HTTPException(status_code=404, detail=f"Student {id} not found")
+            raise HTTPException(status_code=404, detail=f"Kine {id} not found")
         
 # Route pour supprimer un document
 @router.delete("/{id}", response_description="Kine data deleted")
@@ -71,4 +85,4 @@ async def delete_document(id: str):
     delete_result = await kineService.delete(id)
     if delete_result == 1:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
-    raise HTTPException(status_code=404, detail=f"Student {id} not found")
+    raise HTTPException(status_code=404, detail=f"Kine {id} not found")
