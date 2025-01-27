@@ -46,7 +46,7 @@ class KineService:
         kine = await self.collection.find_one({"_id": ObjectId(id)})
         return kine
     
-        # Read All: Récupérer tous les patients
+    # Read All: Récupérer tous les patients
     async def read_all(self, id):
         """
         Read all patients from a specific kine.
@@ -59,7 +59,12 @@ class KineService:
         """
         pipeline = [
             {
-                "$match": {"_id": id}
+                "$match": {"_id": ObjectId(id)}
+            },
+            {
+                '$project': {
+                    '_id': {'$toString': '$_id'}
+                }
             },
             {
                 "$lookup": {

@@ -59,7 +59,12 @@ class PatientService:
         """
         pipeline = [
             {
-                "$match": {"_id": id}
+                "$match": {"_id": ObjectId(id)}
+            },
+            {
+                '$project': {
+                    '_id': {'$toString': '$_id'}
+                }
             },
             {
                 "$lookup": {

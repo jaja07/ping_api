@@ -38,15 +38,15 @@ async def read_patient(id: str):
     else:
         raise HTTPException(status_code=404, detail="patient not found")   
 
-# Read consultations route
+# Read consultation route
 @router.get("/consultations/{id}", response_description="Get consultations", response_model=ConsultationCollection, response_model_by_alias=False)
 async def read_patients(id: str):
     """
-    Retrieve a list of consultations for a specific consultation.
+    Retrieve a list of consultations for a specific patient.
     """
     read_consultations = await PatientService.read_all(id)
     if read_consultations:
-        return read_consultations
+        return {'consultations': read_consultations}
     else:
         raise HTTPException(status_code=404, detail="Consultation not found")
 

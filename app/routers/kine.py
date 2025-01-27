@@ -48,7 +48,7 @@ async def read_patients(id: str):
     """
     read_patients = await kineService.read_all(id)
     if read_patients:
-        return read_patients
+        return {"patients": read_patients}
     else:
         raise HTTPException(status_code=404, detail="Patients not found")
 

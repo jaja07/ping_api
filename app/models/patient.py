@@ -20,13 +20,14 @@ class PatientModel(BaseModel):
     tel: str = Field(...)
     adresse: Adresse = Field(...)
     sexe: Sexe = Field(...)
-    carte_vitale: int = Field(...)
+    carte_vitale: str = Field(...)
     anamnese: Anamnese = Field(...)
     morphostatique: Morphostatique = Field(...)
     travail: Travail = Field(...)
     model_config = ConfigDict(
         populate_by_name=True,
         arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str},
         json_schema_extra={
             "example": {
                 "kineid": "64c3e5c82db9c3c33d56789a",
@@ -37,12 +38,12 @@ class PatientModel(BaseModel):
                 "tel": "+123456789",
                 "adresse":{"rue":"13 rue Lafayette","ville":"Rouen","code_postal":"76000"},
                 "sexe": "homme",
-                "carte_vitale": 123456789,
+                "carte_vitale": "123456789",
                 "anamnese": {"historique_maladie":"maladie","motif":"motif","antecedents":"antecedents","antecedents_familiaux":"antecedents_familiaux"},
                 "morphostatique": {"taille": 1.80,"poids": 80,"lateralite":"droite","remarques":"remarques"},
                 "travail": {"profession":"data scientist","sport":"sport"},
             }
-        },
+        }
     )
 
 class UpdatePatientModel(BaseModel):
@@ -53,7 +54,7 @@ class UpdatePatientModel(BaseModel):
     tel: Optional[str] = None
     adresse: Optional[Adresse] = None
     sexe: Optional[Sexe] = None
-    carte_vitale: Optional[int] = None
+    carte_vitale: Optional[str] = None
     anamnese: Optional[Anamnese] = None
     morphostaique: Optional[Morphostatique] = None
     travail: Optional[Travail] = None
@@ -70,13 +71,18 @@ class UpdatePatientModel(BaseModel):
                 "tel": "+123456789",
                 "adresse":{"rue":"rue de la guerre","ville":"Paris","code_postal":"75000"},
                 "sexe": "homme",
-                "carte_vitale": 123456789,
+                "carte_vitale": "123456789",
                 "anamnese": {"historique_maladie":"maladie","motif":"motif","antecedents":"antecedents","antecedents_familiaux":"antecedents_familiaux"},
                 "morphostatique": {"taille": 1.80,"poids": 80,"lateralite":"droite","remarques":"remarques"},
                 "travail": {"profession":"profession","sport":"sport"},
             }
         },
     )
+
+class PatientFromKineModel(BaseModel):
+    id: PyObjectId = Field(alias="_id")  # L'ObjectId est converti en chaîne
+    nom: str
+    prenom: str
 
 class PatientCollection(BaseModel):
     """
@@ -85,4 +91,4 @@ class PatientCollection(BaseModel):
     This exists because providing a top-level array in a JSON response can be a [vulnerability](https://haacked.com/archive/2009/06/25/json-hijacking.aspx/)
     """
 
-    patients: List[PatientModel]
+    patients: List[PatientFromKineModel]
