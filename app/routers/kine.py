@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Body, status
+from fastapi import APIRouter, HTTPException, Depends, Body, status, Query
 from fastapi.responses import Response
 from bson.objectid import ObjectId
 from services.kine_service import KineService
@@ -10,7 +10,11 @@ from models.kine import (
 from models.patient import (
     PatientCollection
 )
+from utils.hashing import Hash
+from passlib.hash import bcrypt
 
+
+hash = Hash()
 router = APIRouter()
 kineService = KineService()
 
@@ -21,6 +25,10 @@ async def add_kine(kine: KineModel = Body(...)):  #La requête doit contenir un 
     Insert a new kine record.
     """
     kine_data = kine.model_dump(by_alias=True, exclude=["id"])  #Convertit l'instance du modèle en un dictionnaire Python. by_alias=True : Utilise les alias définis dans KineModel (s'il y en a) pour les clés du dictionnaire.
+
+    # Hacher le mot de passe avant de l'envoyer au service
+    #kine_data['mdp'] = hash.bcrypt(kine_data['mdp'])
+    kine_data['mdp'] = bcrypt.hash(kine_data['mdp'])
     kineid = await kineService.create(kine_data)
     if kineid is None:
         raise HTTPException(status_code=500, detail="Kine could not be created")
@@ -29,12 +37,15 @@ async def add_kine(kine: KineModel = Body(...)):  #La requête doit contenir un 
     return created_kine
 
 # Read kine route
-@router.get("/{id}", response_description="Get a single kine", response_model=KineModel, response_model_by_alias=False)
-async def read_kine(id: str):
+@router.get("/", response_description="Get a single kine", response_model=KineModel, response_model_by_alias=False)
+async def read_kine(
+    email: str = Query(..., description="The email of the kine"),
+    password: str = Query(..., description="The password of the kine")):
     """
-    Retrieve a kine record.
+    Retrieve a kine record with his email and password.
+    Endpoint url example: http://localhost:8080/kine?email=qui@example.com&password=guillaume
     """
-    read_kine = await kineService.read_one(id)
+    read_kine = await kineService.read(email, password)
     if read_kine:
         return read_kine
     else:

@@ -2,7 +2,9 @@ import os
 import motor.motor_asyncio
 from bson.objectid import ObjectId
 from pymongo import ReturnDocument
-
+from utils.hashing import Hash
+from fastapi import HTTPException
+from passlib.hash import bcrypt
 
 class KineService:
     def __init__(self):
@@ -29,8 +31,12 @@ class KineService:
         Returns:
             str: The ID of the inserted kine.
         """
-        result = await self.collection.insert_one(kine_data)
-        return str(result.inserted_id)
+        try:
+            result = await self.collection.insert_one(kine_data)
+            return str(result.inserted_id)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        
 
     # Read One: Récupérer un kine par son ID
     async def read_one(self, id):
@@ -45,6 +51,25 @@ class KineService:
         """
         kine = await self.collection.find_one({"_id": ObjectId(id)})
         return kine
+    
+    # Read : Récupérer un kine par son email et son mot de passe
+    async def read(self, email: str, password: str):
+        """
+        Read a kine with his email and password.
+
+        Args:
+            email (str): The kine email.
+            password (str): The kine password.
+
+        Returns:
+            _DocumentType: The kine document inserted.
+        """
+        kine = await self.collection.find_one({"email": email})     
+        # Vérifier si le mot de passe correspond (en supposant que le mot de passe est haché)
+        if kine and bcrypt.verify(password, kine["mdp"]):
+            return kine
+        else:
+            return None
     
     # Read All: Récupérer tous les patients
     async def read_all(self, id):
