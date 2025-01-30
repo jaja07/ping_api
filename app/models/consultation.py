@@ -22,8 +22,8 @@ class ConsultationModel(BaseModel):
             "example": {
                 "patientid": "5f8e1b7e1c7a8f5c3c1c1e3f",
                 "date_consultation": "2020-10-20",
-                "flexion": "active",
-                "extension": "active",
+                "flexion": {"active": 0.0, "passive": 0.0},
+                "extension": {"active": 0.0, "passive": 0.0},
                 "bdk": "bdk"
             }
         },
@@ -51,6 +51,8 @@ class UpdateConsultationModel(BaseModel):
 
 class ConsultationFromPatient(BaseModel):
     date_consultation: datetime = Field(...)
+    flexion: Flexion = Field(...)
+    extension: Extension = Field(...)
 
 class ConsultationCollection(BaseModel):
     """

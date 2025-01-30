@@ -47,10 +47,11 @@ class Travail(BaseModel):
         arbitrary_types_allowed=True,
     )
 
-class Flexion(str, Enum):
-    active = "active"
-    passive = "passive"
+class Flexion(BaseModel):
+    active : float = Field(...)
+    passive : float = Field(...)
+    
 
-class Extension(str, Enum):
-    active = "active"
-    passive = "passive"
+class Extension(BaseModel):
+    active : float = Field(...)
+    passive : float = Field(...)
