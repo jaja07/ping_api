@@ -40,11 +40,11 @@ async def read_patient(id: str):
 
 # Read consultation route
 @router.get("/consultations/{id}", response_description="Get consultations", response_model=ConsultationCollection, response_model_by_alias=False)
-async def read_patients(id: str):
+async def read_consultations(id: str):
     """
     Retrieve a list of consultations for a specific patient.
     """
-    read_consultations = await PatientService.read_all(id)
+    read_consultations = await patientService.read_all(id)
     if read_consultations:
         return {'consultations': read_consultations}
     else:

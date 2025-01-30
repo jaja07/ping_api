@@ -36,11 +36,11 @@ async def add_kine(kine: KineModel = Body(...)):  #La requête doit contenir un 
         created_kine = await kineService.read_one(kineid)
     return created_kine
 
-# Read kine route
-@router.get("/", response_description="Get a single kine", response_model=KineModel, response_model_by_alias=False)
-async def read_kine(
-    email: str = Query(..., description="The email of the kine"),
-    password: str = Query(..., description="The password of the kine")):
+# Authenticate kine route
+@router.post("/auth", response_model=KineModel, response_model_by_alias=False)
+async def authenticate_kine(
+    email: str = Body(..., description="The email of the kine"),
+    password: str = Body(..., description="The password of the kine")):
     """
     Retrieve a kine record with his email and password.
     Endpoint url example: http://localhost:8080/kine?email=qui@example.com&password=guillaume
@@ -49,7 +49,7 @@ async def read_kine(
     if read_kine:
         return read_kine
     else:
-        raise HTTPException(status_code=404, detail="Kine not found")   
+        raise HTTPException(status_code=404, detail="Kine not found") 
 
 # Read patients route
 @router.get("/patients/{id}", response_description="Get patients", response_model=PatientCollection, response_model_by_alias=False)
