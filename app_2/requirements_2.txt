@@ -1,0 +1,4 @@
+gliner
+uvicorn
+fastapi
+pdfkit
