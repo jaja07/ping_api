@@ -1,9 +1,11 @@
 import uvicorn
-from fastapi import FastAPI
-from routers import consultation, kine, patient
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from typing import List
+from routers import consultation, kine, patient, upload_pose, stream_pose
 
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins
@@ -15,7 +17,8 @@ app.add_middleware(
 app.include_router(kine.router, tags=["Kine"], prefix="/kine")
 app.include_router(patient.router, tags=["Patient"], prefix="/patient")
 app.include_router(consultation.router, tags=["Consultation"], prefix="/consultation")
-#app.include_router(stream.router, tags=["Stream"], prefix="/stream")
+app.include_router(upload_pose.router, tags=["Upload Pose"], prefix="/upload")
+app.include_router(stream_pose.router)
 
 @app.get("/", tags=["Root"])
 async def read_root():
