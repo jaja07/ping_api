@@ -49,7 +49,7 @@ class PatientService:
     # Read All: Récupérer toutes les consultations
     async def read_all(self, id):
         """
-        Read all consultations from a specific kine.
+        Read all consultations from a specific patient.
 
         Args:
             id (str): The patient id from which we retrieve a list of matching consultations.

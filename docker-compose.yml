@@ -16,7 +16,7 @@ services:
     build: ./app2
     container_name: api2
     ports:
-      - "8081:8000"
+      - "8082:8000"
 
   mongo:
     image: mongo:latest

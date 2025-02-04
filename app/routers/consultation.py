@@ -1,8 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends, Body, status
-from fastapi.responses import Response
-from bson.objectid import ObjectId
+from fastapi import APIRouter, HTTPException, Body, status
+from fastapi.responses import Response, FileResponse
 from services.consultation_service import ConsultationService
-from fastapi.encoders import jsonable_encoder
 from services.bilan_service import generate_pdf
 from datetime import datetime
 from models.consultation import (
@@ -13,10 +11,25 @@ from models.consultation import (
 router = APIRouter()
 consultationService = ConsultationService()
 
-async def update_bdk_path(patient_id: str):
+# Download bdk file
+@router.get("/download/{id}", response_description="Download the BDK file")
+async def download_bdk(id: str):
+    """
+    Download the BDK file.
+
+    Args: id (str): The consultation id.
+    """
+    consultation = await consultationService.read_one(id)
+    if consultation is not None:
+        bdk_path = "/code/app/bdk/" + consultation["bdk"]
+        return FileResponse(bdk_path, media_type="application/pdf", filename=consultation['bdk'])
+    else:
+        raise HTTPException(status_code=404, detail="BDK file not found")
+
+async def update_bdk_path(patient_id: str, consultation_id: str):
     current_date = datetime.now().strftime("%Y-%m-%d")
     consultation_data = {
-        "bdk": f"{patient_id}_bdk_{current_date}.pdf"
+        "bdk": f"{consultation_id}_bdk_{current_date}.pdf"
     }
     try:
         update_result = await consultationService.update(patient_id, consultation_data)
@@ -41,9 +54,8 @@ async def add_consulation(consulation: ConsultationModel = Body(...)):  #La requ
     if consultationid is not None:
         created_consultation = await consultationService.read_one(consultationid)
         # Mettre à jour le chemin du fichier BDK dans la consultation
-        await update_bdk_path(consultationid)
+        await update_bdk_path(created_consultation["patientid"], consultationid)
         # Générer le PDF
-        print(created_consultation["patientid"])
         await generate_pdf(created_consultation["patientid"], consultationid)
     else:
         raise HTTPException(status_code=500, detail="Consulation could not be created")
