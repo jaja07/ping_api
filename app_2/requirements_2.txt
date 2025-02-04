@@ -1,4 +1,0 @@
-gliner
-uvicorn
-fastapi
-pdfkit

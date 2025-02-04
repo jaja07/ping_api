@@ -2,7 +2,6 @@ import os
 import motor.motor_asyncio
 from bson.objectid import ObjectId
 from pymongo import ReturnDocument
-from utils.hashing import Hash
 from fastapi import HTTPException
 from passlib.hash import bcrypt
 

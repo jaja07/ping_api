@@ -11,4 +11,5 @@ numpy
 opencv-python
 mediapipe
 python-multipart
-ultralytics
+gliner
+pdfkit

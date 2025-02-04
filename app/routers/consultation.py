@@ -3,6 +3,8 @@ from fastapi.responses import Response
 from bson.objectid import ObjectId
 from services.consultation_service import ConsultationService
 from fastapi.encoders import jsonable_encoder
+from services.bilan_service import generate_pdf
+from datetime import datetime
 from models.consultation import (
     ConsultationModel,
     UpdateConsultationModel
@@ -11,19 +13,42 @@ from models.consultation import (
 router = APIRouter()
 consultationService = ConsultationService()
 
+async def update_bdk_path(patient_id: str):
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    consultation_data = {
+        "bdk": f"{patient_id}_bdk_{current_date}.pdf"
+    }
+    try:
+        update_result = await consultationService.update(patient_id, consultation_data)
+        return update_result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la mise à jour de la consultation: {str(e)}")
+    
 #Create route
 @router.post("/", response_description="New consultation added", response_model=ConsultationModel, status_code=status.HTTP_201_CREATED, response_model_by_alias=False)
 async def add_consulation(consulation: ConsultationModel = Body(...)):  #La requête doit contenir un corps JSON qui sera validé et converti en une instance du modèle ConsultationModel. Body(...) : Indique que cette donnée est obligatoire (le ... signifie "valeur requise").
     """
     Insert a new consulation record.
+    Update the bdk path in the consultation record.
+    Generate the PDF.
     """
-    consulation_data = consulation.model_dump(by_alias=True, exclude=["id"])  #Convertit l'instance du modèle en un dictionnaire Python. by_alias=True : Utilise les alias définis dans ConsultationModel (s'il y en a) pour les clés du dictionnaire.
-    consulationid = await consultationService.create(consulation_data)
-    if consulationid is None:
-        raise HTTPException(status_code=500, detail="Consulation could not be created")
+    consultation_data = consulation.model_dump(by_alias=True, exclude=["id"])  #Convertit l'instance du modèle en un dictionnaire Python. by_alias=True : Utilise les alias définis dans ConsultationModel (s'il y en a) pour les clés du dictionnaire.
+    try:
+        consultationid = await consultationService.create(consultation_data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la création de la consultation: {str(e)}")
+    
+    if consultationid is not None:
+        created_consultation = await consultationService.read_one(consultationid)
+        # Mettre à jour le chemin du fichier BDK dans la consultation
+        await update_bdk_path(consultationid)
+        # Générer le PDF
+        print(created_consultation["patientid"])
+        await generate_pdf(created_consultation["patientid"], consultationid)
     else:
-        created_consulation = await consultationService.read_one(consulationid)
-    return created_consulation
+        raise HTTPException(status_code=500, detail="Consulation could not be created")
+
+    return created_consultation
 
 # Read route
 @router.get("/{id}", response_description="Get a single consulation", response_model=ConsultationModel, response_model_by_alias=False)
@@ -31,26 +56,26 @@ async def read_consulation(id: str):
     """
     Retrieve a consulation record.
     """
-    read_consulation = await consultationService.read_one(id)
-    if read_consulation:
-        return read_consulation
+    read_consultation = await consultationService.read_one(id)
+    if read_consultation:
+        return read_consultation
     else:
-        raise HTTPException(status_code=404, detail="consulation not found")   
+        raise HTTPException(status_code=404, detail="consultation not found")   
 
 # Update route
 @router.put("/{id}", response_description="consulation data updated", response_model=ConsultationModel)
-async def update_consulation(id: str, consulation: UpdateConsultationModel = Body(...)):
+async def update_consulation(id: str, consultation: UpdateConsultationModel = Body(...)):
     """
     Update individual fields of an existing consulation record.
 
     Only the provided fields will be updated.
     Any missing or `null` fields will be ignored.
     """
-    consulation = {
-        k: v for k, v in consulation.model_dump(by_alias=True).items() if v is not None
+    consultation = {
+        k: v for k, v in consultation.model_dump(by_alias=True).items() if v is not None
     }
-    if len(consulation) >= 1:
-        update_result = await consultationService.update(id, consulation)
+    if len(consultation) >= 1:
+        update_result = await consultationService.update(id, consultation)
         if update_result is not None:
             return update_result
         else:

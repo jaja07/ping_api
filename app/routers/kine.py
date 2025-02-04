@@ -10,11 +10,10 @@ from models.kine import (
 from models.patient import (
     PatientCollection
 )
-from utils.hashing import Hash
 from passlib.hash import bcrypt
 
 
-hash = Hash()
+
 router = APIRouter()
 kineService = KineService()
 

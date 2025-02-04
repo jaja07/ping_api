@@ -14,27 +14,38 @@ class ConsultationModel(BaseModel):
     date_consultation: datetime = Field(...)
     flexion: Flexion = Field(...)
     extension: Extension = Field(...)
-    bdk: str = Field(...)
+    bdk: str = "bdk"
+    douleur_duree: str = Field(...)
+    douleur_niveau: int = Field(...)
+    nb_seances: int = Field(...)
+    frequence_seances: str = Field(...)
     model_config = ConfigDict(
         populate_by_name=True,
         arbitrary_types_allowed=True,
         json_schema_extra={
             "example": {
-                "patientid": "5f8e1b7e1c7a8f5c3c1c1e3f",
+                "patientid": "679b4cbc402485831ef448f3",
                 "date_consultation": "2020-10-20",
                 "flexion": {"active": 0.0, "passive": 0.0},
                 "extension": {"active": 0.0, "passive": 0.0},
-                "bdk": "bdk"
+                "bdk": "bdk",
+                "douleur_duree": "1 semaine",
+                "douleur_niveau": 5,
+                "nb_seances": 5,
+                "frequence_seances": "1 fois par semaine"
             }
         },
     )
 
 class UpdateConsultationModel(BaseModel):
-    patientid: PyObjectId = Field(...)
     date_consultation: Optional[datetime] = None
     flexion: Optional[Flexion] = None
     extension: Optional[Extension] = None
     bdk: Optional[str] = None
+    douleur_duree: Optional[str] = None
+    douleur_niveau: Optional[int] = None
+    nb_seances: Optional[int] = None
+    frequence_seances: Optional[str] = None
     model_config = ConfigDict(
         populate_by_name=True,
         arbitrary_types_allowed=True,
@@ -44,7 +55,11 @@ class UpdateConsultationModel(BaseModel):
                 "date_consultation": "2020-10-20",
                 "flexion": "active",
                 "extension": "active",
-                "bdk": "bdk"
+                "bdk": "bdk",
+                "douleur_duree": "1 semaine",
+                "douleur_niveau": 5,
+                "nb_seances": 5,
+                "frequence_seances": "1 fois par semaine"
             }
         },
     )
