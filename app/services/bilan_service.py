@@ -1,13 +1,11 @@
 import pdfkit
 import os
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
-from fastapi import Depends, HTTPException
-from utils.dependencies import get_patient_id, get_consultation_id
+from fastapi import HTTPException
 from services.patient_service import PatientService
 from services.consultation_service import ConsultationService
 from services.kine_service import KineService
 
-print("Current working directory:", os.getcwd())
 
 # Configuration de pdfkit
 config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
@@ -16,9 +14,8 @@ consultationService = ConsultationService()
 kineService = KineService()
 
 async def generate_pdf(
-    patient_id: str = Depends(get_patient_id),
-    consultation_id: str = Depends(get_consultation_id),          
-    output_path: str = "bilan_kine.pdf"
+    patient_id: str,
+    consultation_id: str 
 ):
     base_dir = os.path.abspath("app/utils/")
     

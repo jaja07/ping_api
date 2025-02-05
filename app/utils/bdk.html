@@ -17,22 +17,19 @@
 </head>
 <body>
     <div class="header">
-        Bilan Kinésithérapeutique du {{ date_bilan }}. Patient : {{ patient_nom }} ({{ patient_dob }})<br>
-        généré par BilanKiné - https://bilankine.fr
+        Bilan Kinésithérapeutique du {{ date_bilan }}. Patient : {{ patient_nom }} ({{ patient_dob }})
     </div>
 
     <div class="section">
         <p class="info"><strong>{{ kine_nom }}</strong><br>{{ kine_adresse }}<br>{{ kine_ville }}</p>
-        <p class="info" style="text-align: right;"><strong>{{ medecin_nom }}</strong><br>{{ medecin_ville }}</p>
     </div>
 
     <div class="title">BILAN DE DÉBUT DE TRAITEMENT</div>
 
     <div class="section">
-        <p class="info"><strong>{{ patient_nom }} ({{ patient_age }} ans)</strong> se plaint de 
-        <strong>{{ douleur_zone }}</strong> depuis <strong>{{ douleur_duree }}</strong>; 
-        sa douleur est évaluée à <strong>{{ douleur_niveau }}/10</strong> par EVA; 
-        elle est <strong>{{ douleur_description }}</strong>.</p>
+        <p class="info"><strong>{{ patient_nom }} ({{ patient_dob }})</strong> se plaint d'une douleur
+         depuis <strong>{{ douleur_duree }}</strong>; 
+        sa douleur est évaluée à <strong>{{ douleur_niveau }}/10</strong>;</p>
     </div>
 
     <div class="section">
@@ -40,22 +37,21 @@
             <tr>
                 <th>Test</th>
                 <th>Valeurs</th>
-                <th>Réf.</th>
+
             </tr>
-            {% for test in tests %}
             <tr>
-                <td>{{ test.nom }}</td>
-                <td>{{ test.valeur }}</td>
-                <td>{{ test.ref }}</td>
+                <td>Flexion</td>
+                <td>{{ flexion.passive }}</td>
             </tr>
-            {% endfor %}
+            <tr>
+                <td>Extension</td>
+                <td>{{ extension.passive }}</td>
         </table>
     </div>
 
     <div class="section">
-        <p class="info">Suite à votre prescription, j’ai proposé <strong>{{ nb_seances }}</strong> séances de kiné au cabinet 
+        <p class="info">Suite à cette consultation, j’ai proposé <strong>{{ nb_seances }}</strong> séances de kiné au cabinet 
         au rythme de <strong>{{ frequence_seances }}</strong> par semaine.</p>
-        <p class="info">Je vous tiendrai informé de l’évolution du patient en fin de traitement.</p>
     </div>
 
     <div class="footer">

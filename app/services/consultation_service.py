@@ -45,7 +45,7 @@ class ConsultationService:
         consultation = await self.collection.find_one({"_id": ObjectId(id)})
         return consultation
     
-    # Update: Mettre à jour un kiné par son ID
+    # Update: Mettre à jour une consultation par son ID
     async def update(self, id, update_fields):
         """
         Update a consultation with the `update_field` object.

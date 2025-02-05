@@ -32,7 +32,7 @@ async def update_bdk_path(patient_id: str, consultation_id: str):
         "bdk": f"{consultation_id}_bdk_{current_date}.pdf"
     }
     try:
-        update_result = await consultationService.update(patient_id, consultation_data)
+        update_result = await consultationService.update(consultation_id, consultation_data)
         return update_result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur lors de la mise à jour de la consultation: {str(e)}")

@@ -175,3 +175,4 @@ testModels/
 bus.jpg
 #**/yolo11x-pose.pt
 *.pt
+app/bdk/

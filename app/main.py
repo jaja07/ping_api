@@ -17,7 +17,7 @@ app.include_router(kine.router, tags=["Kine"], prefix="/kine")
 app.include_router(patient.router, tags=["Patient"], prefix="/patient")
 app.include_router(consultation.router, tags=["Consultation"], prefix="/consultation")
 app.include_router(upload_pose.router, tags=["Upload Pose"], prefix="/upload")
-#app.include_router(ner.router, tags=["Ner_Task"], prefix="/ner_task")
+app.include_router(ner.router, tags=["Ner_Task"], prefix="/ner_task")
 #app.include_router(bilan.router, tags=["Generate_Bilan"], prefix="/generate_bilan")
 @app.get("/", tags=["Root"])
 async def read_root():
