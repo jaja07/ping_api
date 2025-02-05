@@ -12,8 +12,6 @@ from models.patient import (
 )
 from passlib.hash import bcrypt
 
-
-
 router = APIRouter()
 kineService = KineService()
 

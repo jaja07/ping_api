@@ -78,8 +78,7 @@ class PatientService:
                                 "_id": 1,
                                 "date_consultation": 1,
                                 "flexion": 1,
-                                "extension": 1,
-                                "bdk": 1
+                                "extension": 1
                             }
                         }
                     ]

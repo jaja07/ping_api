@@ -65,6 +65,7 @@ class UpdateConsultationModel(BaseModel):
     )
 
 class ConsultationFromPatient(BaseModel):
+    id: PyObjectId = Field(alias="_id")  # L'ObjectId est converti en chaîne
     date_consultation: datetime = Field(...)
     flexion: Flexion = Field(...)
     extension: Extension = Field(...)
